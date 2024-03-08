@@ -181,11 +181,16 @@ const CreatingBooking = () => {
 		setRoomType(e.target.value);
 	};
 
-	if (errorMessage !== "") {
+	// if (errorMessage !== "") {
+	// 	setTimeout(() => {
+	// 		setErrorMessage({ message: "", success: "error" });
+	// 	}, 9000);
+	// }
+	useEffect(() => {
 		setTimeout(() => {
 			setErrorMessage({ message: "", success: "error" });
 		}, 9000);
-	}
+	}, [errorMessage]);
 
 	return (
 		<div className="max-w-[37rem] mx-auto mt-12">
@@ -223,10 +228,10 @@ const CreatingBooking = () => {
 							console.log(e.target.value);
 						}}
 					>
-						<MenuItem key="Select" value="Select Room">
+						<MenuItem key="Select" value="1">
 							Select Room
 						</MenuItem>
-						{Object.keys(totalRooms).map((option) => (
+						{Object.keys(totalRooms).map((option, index) => (
 							<MenuItem key={option} value={option}>
 								{option}
 							</MenuItem>
@@ -246,10 +251,10 @@ const CreatingBooking = () => {
 							setRoomNumber(e.target.value);
 						}}
 					>
-						<MenuItem key="Select Room Number" value="Select Room Number">
+						<MenuItem key="Select Room Number" value="1">
 							Select Room Number
 						</MenuItem>
-						{roomArray.map((option) => (
+						{roomArray.map((option, index) => (
 							<MenuItem key={option} value={option}>
 								{option}
 							</MenuItem>

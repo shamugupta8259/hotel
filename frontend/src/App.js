@@ -5,15 +5,16 @@ import Header from "./components/Header";
 import Home from "./components/Home";
 import CreatingBooking from "./components/CreatingBooking";
 import EditBooking from "./components/EditBooking";
+import ViewAllBooking from "./components/ViewAllBooking";
 
 function App() {
 	return (
 		<BrowserRouter>
 			<Header />
 			<Routes>
-				<Route path="/" element={<Home />} />
+				<Route path="/" element={<ViewAllBooking />} />
 				<Route path="/book" element={<CreatingBooking />} />
-				<Route path="/edit-booking/:_id" element={<EditBooking />} />
+				<Route path="/update-post/:_id" element={<EditBooking />} />
 			</Routes>
 		</BrowserRouter>
 	);

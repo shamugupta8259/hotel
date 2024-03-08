@@ -1,6 +1,8 @@
 const Booking = require("../schemas/booking_schema");
 // const errorHandler = require("../utils/errorHandler");
 const AppError = require("./../utils/errorHandler");
+
+const moment = require("moment");
 const getAllBookings = async (req, res) => {
 	try {
 		const fetchAllBookings = await Booking.find({});
@@ -87,14 +89,15 @@ const editBooking = async (req, res, next) => {
 	}
 	console.log("********************************");
 	const editedBooking = await Booking.findByIdAndUpdate(req.params._id, {
-		room,
+		...room,
+		status: "success",
 	});
 	console.log(editedBooking);
 	res.status(200).json(editedBooking);
 };
 
 const deleteBooking = async (req, res, next) => {
-	const deleteBookingRequest = Booking.findByIdAndDelete(req.params._id);
+	const deleteBookingRequest = await Booking.findByIdAndDelete(req.params._id);
 	res.status(200).json({
 		message: "Booking deleted successfully",
 	});
@@ -108,4 +111,105 @@ const getBooking = async (req, res, next) => {
 	res.status(200).json(bookingReq[0]);
 };
 
-module.exports = { createBooking, editBooking, deleteBooking, getBooking };
+const viewallBookings = async (req, res, next) => {
+	try {
+		// const sortDirection = req.query.order === "asc" ? 1 : -1;
+
+		const roomNumber =
+			req.query.roomNumber && req.query.roomNumber[0] === "S"
+				? ""
+				: req.query.roomNumber;
+		const roomType =
+			req.query.roomType && req.query.roomType[0] === "S"
+				? ""
+				: req.query.roomType;
+		console.log(req.query);
+		const room = req.query;
+		// if (req.query === ) {
+		// 	const posts = await Booking.find({});
+
+		// 	return res.status(200).json(posts);
+		// }
+		const reqstartTime = new Date(req.query.startTime);
+		const reqendTime = new Date(req.query.startTime);
+		if (!roomType.startTime && !roomType.endTime) {
+			console.log("yooooo");
+			const posts = await Booking.find({
+				...(roomNumber && { roomNumber: roomNumber }),
+				...(roomType && { roomType: roomType }),
+			});
+
+			return res.status(200).json(posts);
+		} else if (!roomType.endTime) {
+			const posts = await Booking.find({
+				...(req.query.startTime !== null && {
+					startTime: { $gte: reqstartTime },
+				}),
+				...(roomNumber && { roomNumber: roomNumber }),
+				...(roomType && { roomType: roomType }),
+			});
+
+			return res.status(200).json(posts);
+		} else if (!roomType.startTime) {
+			const posts = await Booking.find({
+				...(req.query.endTime !== null && {
+					endTime: { $lte: reqendTime },
+				}),
+				...(roomNumber && { roomNumber: roomNumber }),
+				...(roomType && { roomType: roomType }),
+			});
+
+			return res.status(200).json(posts);
+		} else {
+			const posts = await Booking.find({
+				...(req.query.startTime !== null && {
+					startTime: { $gte: reqstartTime },
+				}),
+				...(req.query.endTime !== null && {
+					endTime: { $lte: reqendTime },
+				}),
+				...(roomNumber && { roomNumber: roomNumber }),
+				...(roomType && { roomType: roomType }),
+			});
+
+			return res.status(200).json(posts);
+		}
+		// const post11 = await Booking.find();
+		// console.log(post11);
+		// if (req.query.endTime === null && req.query.startTime === null) {
+		// 	const posts = await Booking.find({
+		// 		...(roomNumber && { roomNumber: roomNumber }),
+		// 		...(roomType && { roomType: roomType }),
+		// 	});
+		// 	console.log(posts);
+		// 	return res.status(200).json(posts);
+		// } else {
+		// 	const posts = await Booking.find({
+		// 		...(req.query.startTime && {
+		// 			startTime: { $gte: moment(req.query.startTime).toDate() },
+		// 		}),
+		// 		...(req.query.endTime && {
+		// 			endTime: { $lte: moment(req.query.endTime).toDate() },
+		// 		}),
+		// 		...(roomNumber && { roomNumber: roomNumber }),
+		// 		...(roomType && { roomType: roomType }),
+		// 	});
+		// 	console.log(posts);
+		// 	return res.status(200).json(posts);
+		// }
+
+		// const totalPosts = await posts.countDocuments();
+		// const totalPosts = await Booking.find();
+		// console.log(totalPosts);
+	} catch (error) {
+		next(error);
+	}
+};
+
+module.exports = {
+	createBooking,
+	editBooking,
+	deleteBooking,
+	getBooking,
+	viewallBookings,
+};

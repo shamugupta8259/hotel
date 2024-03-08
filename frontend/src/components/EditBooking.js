@@ -183,7 +183,7 @@ const EditBooking = () => {
 				return;
 			}
 			const res = await fetch(`http://localhost:5005/api/booking/edit/${_id}`, {
-				method: "POST",
+				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",
 				},
@@ -224,11 +224,16 @@ const EditBooking = () => {
 	// 	});
 	// };
 
-	if (errorMessage !== "") {
+	// if (errorMessage !== "") {
+	// 	setTimeout(() => {
+	// 		setErrorMessage({ message: "", success: "error" });
+	// 	}, 9000);
+	// }
+	useEffect(() => {
 		setTimeout(() => {
 			setErrorMessage({ message: "", success: "error" });
 		}, 9000);
-	}
+	}, [errorMessage]);
 
 	return (
 		<div className="max-w-[37rem] mx-auto mt-12">
@@ -272,7 +277,7 @@ const EditBooking = () => {
 							// console.log(e.target.value);
 						}}
 					>
-						<MenuItem key="Select" value="Select Room">
+						<MenuItem key="Select" value="1">
 							Select Room
 						</MenuItem>
 						{Object.keys(totalRooms).map((option) => (
@@ -297,7 +302,7 @@ const EditBooking = () => {
 							});
 						}}
 					>
-						<MenuItem key="Select Room Number" value="Select Room Number">
+						<MenuItem key="Select Room Number" value="0">
 							Select Room Number
 						</MenuItem>
 						{roomArray &&
