@@ -58,7 +58,12 @@ const ViewAllBooking = () => {
 		} catch (error) {
 			console.log(error);
 		}
-	});
+	}, [
+		bookingData.endTime,
+		bookingData.roomNumber,
+		bookingData.roomType,
+		bookingData.startTime,
+	]);
 	// console.log(new Date(), Date.now());
 	const handleDeleteModal = () => {
 		setRefundPrice(0);

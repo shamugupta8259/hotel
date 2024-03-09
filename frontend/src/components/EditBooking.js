@@ -9,12 +9,10 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { useNavigate, useParams } from "react-router-dom";
 import { MenuItem } from "@mui/material";
 import dayjs from "dayjs";
-import { useLocation } from "react-router-dom";
 import { Button, Modal } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 const EditBooking = () => {
-	const location = useLocation();
 	const totalRooms = { A: [1, 2], B: [1, 2, 3], C: [1, 2, 3, 4, 5] };
 	const { _id } = useParams();
 	const [bookingData, setBookingData] = useState({
@@ -33,7 +31,7 @@ const EditBooking = () => {
 		message: "",
 		success: "",
 	});
-	const [room, setRoom] = useState({});
+	// const [room, setRoom] = useState({});
 	useEffect(() => {
 		try {
 			const fetchbooking = async () => {
@@ -48,7 +46,7 @@ const EditBooking = () => {
 				);
 				if (res.ok) {
 					const data = await res.json();
-					setRoom(data);
+					// setRoom(data);
 					setBookingData({
 						...bookingData,
 						email: data.userEmail,

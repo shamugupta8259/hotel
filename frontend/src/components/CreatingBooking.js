@@ -162,9 +162,9 @@ const CreatingBooking = () => {
 		}
 	};
 
-	const handleChangeRooms = (e) => {
-		setRoomType(e.target.value);
-	};
+	// const handleChangeRooms = (e) => {
+	// 	setRoomType(e.target.value);
+	// };
 
 	useEffect(() => {
 		setTimeout(() => {
