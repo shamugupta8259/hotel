@@ -4,7 +4,6 @@ import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-// import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { MenuItem } from "@mui/material";
@@ -15,11 +14,11 @@ const CreatingBooking = () => {
 		message: "",
 		success: "",
 	});
-	// let priceUpdated = 0;
+
 	const [email, setEmail] = useState("");
 	const [rooms, setRooms] = useState({
-		startTime: new Date(),
-		endTime: new Date(),
+		startTime: null,
+		endTime: null,
 	});
 	const [roomType, setRoomType] = useState("Select Room");
 	const [roomNumber, setRoomNumber] = useState("Select Room number");
@@ -27,11 +26,7 @@ const CreatingBooking = () => {
 	const [roomArray, setRoomArray] = useState([]);
 
 	const totalRooms = { A: [1, 2], B: [1, 2, 3], C: [1, 2, 3, 4, 5] };
-	// const roomA = ;
-	// const roomB = ;
-	// const roomC = ;
 
-	// const rooms
 	const perRoomPrice = {
 		A: 100,
 		B: 80,
@@ -47,34 +42,28 @@ const CreatingBooking = () => {
 
 		const timeDifference = checkOutTime - checkInTime;
 		const totalHours = timeDifference / (1000 * 60 * 60);
-		// console.log("i am out out tou use eFFect");
-		// console.log("totalHours", totalHours);
+
 		if (
 			roomType.length === 1 &&
 			roomNumber > 0 &&
-			checkInTime > new Date() &&
+			checkInTime >= new Date() &&
 			checkInTime < checkOutTime
 		) {
-			console.log("i am in use eFFect");
 			const roomCategory = roomType.charAt(0) || "S";
 			if (
 				roomCategory === "A" ||
 				roomCategory === "B" ||
 				roomCategory === "C"
 			) {
-				// console.log("totalHours", totalHours);
 				const roomPrice = totalHours.toFixed(2) * perRoomPrice[roomCategory];
 				setPrice(roomPrice.toFixed(0));
 			}
 		}
-	}, [roomType, rooms.startTime, rooms.endTime]);
+	}, [roomType, rooms.startTime, rooms.endTime, roomNumber]);
 	function isValidEmail(email) {
-		// Regular expression for basic email validation
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		return emailRegex.test(email);
 	}
-	// console.log("ROOM TYPES TYPES", totalRooms);
-	// console.log("ROOM TYPES TYPES", roomType);
 
 	const handleSubmit = async () => {
 		try {
@@ -82,11 +71,6 @@ const CreatingBooking = () => {
 				setErrorMessage({ message: "Invalid email address", success: "error" });
 				return;
 			}
-			// const checkInTime =
-			// 	rooms.startTime === undefined ? new Date() : new Date(rooms.startTime);
-
-			// const checkOutTime =
-			// 	rooms.endTime === undefined ? new Date() : new Date(rooms.endTime);
 			const checkInTime = rooms.startTime;
 
 			const checkOutTime = rooms.endTime;
@@ -151,8 +135,8 @@ const CreatingBooking = () => {
 					price: price,
 				}),
 			});
-			const data = await res.json(); // Extract JSON data from the response
-			console.log(data);
+			const data = await res.json();
+
 			if (res.ok) {
 				setEmail("");
 				setRoomType("Select Room");
@@ -165,14 +149,11 @@ const CreatingBooking = () => {
 					message: "You have successfully booked the room",
 					success: "success",
 				});
-
-				console.log("YYYYYYYYIOOOOO");
 			}
 			if (!res.ok) {
 				console.log(data);
 				setErrorMessage({ message: data.message, success: "error" });
 			}
-			// console.log("Form submitted:", { email, rooms });
 		} catch (error) {
 			console.log(error);
 		}
@@ -182,11 +163,6 @@ const CreatingBooking = () => {
 		setRoomType(e.target.value);
 	};
 
-	// if (errorMessage !== "") {
-	// 	setTimeout(() => {
-	// 		setErrorMessage({ message: "", success: "error" });
-	// 	}, 9000);
-	// }
 	useEffect(() => {
 		setTimeout(() => {
 			setErrorMessage({ message: "", success: "error" });
@@ -210,7 +186,6 @@ const CreatingBooking = () => {
 					value={email}
 					onChange={(e) => {
 						setEmail(e.target.value);
-						console.log(email);
 					}}
 				/>
 				<div className="flex justify-center gap-8 mt-3 mb-2">
@@ -226,7 +201,6 @@ const CreatingBooking = () => {
 							setRoomType(e.target.value);
 							setRoomArray(totalRooms[e.target.value]);
 							setRoomNumber("Select Room Number");
-							console.log(e.target.value);
 						}}
 					>
 						<MenuItem key="Select" value="1">
@@ -238,7 +212,7 @@ const CreatingBooking = () => {
 							</MenuItem>
 						))}
 					</TextField>
-					{/* <div className="flex justify-end"> */}
+
 					<TextField
 						id="outlined-select-currency"
 						sx={{ width: "100%" }}
@@ -262,7 +236,7 @@ const CreatingBooking = () => {
 						))}
 					</TextField>
 				</div>
-				{/* </div> */}
+
 				<div className="flex md:flex-row flex-col gap-8 ">
 					<LocalizationProvider dateAdapter={AdapterDayjs}>
 						<DemoContainer components={["DateTimePicker"]}>
@@ -273,9 +247,7 @@ const CreatingBooking = () => {
 										...rooms,
 										startTime: e !== null ? e.toDate() : new Date(),
 									});
-									// handleChangeTime();
 								}}
-								// onAccept={handleChangeTime}
 								label="Check In Time"
 							/>
 						</DemoContainer>
@@ -289,9 +261,7 @@ const CreatingBooking = () => {
 										...rooms,
 										endTime: e !== null ? e.toDate() : new Date(),
 									});
-									// handleChangeTime();
 								}}
-								// onAccept={handleChangeTime}
 								label="Check Out Time"
 							/>
 						</DemoContainer>

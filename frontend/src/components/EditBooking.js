@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
+// import Button from "@mui/material/Button";
 import Alert from "@mui/material/Alert";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -10,6 +10,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { MenuItem } from "@mui/material";
 import dayjs from "dayjs";
 import { useLocation } from "react-router-dom";
+import { Button, Modal } from "flowbite-react";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 const EditBooking = () => {
 	const location = useLocation();
@@ -23,7 +25,7 @@ const EditBooking = () => {
 		roomNumber: "",
 		price: undefined,
 	});
-
+	const [showModal, setShowModal] = useState(false);
 	const navigate = useNavigate();
 	const [roomArray, setRoomArray] = useState();
 	const perRoomPrice = {
@@ -38,9 +40,7 @@ const EditBooking = () => {
 	const [room, setRoom] = useState({});
 	useEffect(() => {
 		try {
-			// console.log(_id);
 			const fetchbooking = async () => {
-				// http://localhost:5005/api/booking/edit/65eae8fce2adf35fbdd6f641
 				const res = await fetch(
 					`http://localhost:5005/api/booking/getbooking/${_id}`,
 					{
@@ -71,7 +71,6 @@ const EditBooking = () => {
 			fetchbooking();
 		} catch (error) {}
 	}, []);
-	console.log(bookingData);
 
 	useEffect(() => {
 		setBookingData({
@@ -94,10 +93,9 @@ const EditBooking = () => {
 			bookingData.roomType &&
 			bookingData.roomType.length === 1 &&
 			bookingData.roomNumber > 0 &&
-			checkInTime > new Date() &&
+			checkInTime >= new Date() &&
 			checkInTime < checkOutTime
 		) {
-			console.log("i am in use eFFect");
 			const roomCategory = bookingData.roomType.charAt(0) || "S";
 			if (
 				roomCategory === "A" ||
@@ -117,6 +115,8 @@ const EditBooking = () => {
 		bookingData.startTime,
 		bookingData.roomNumber,
 		bookingData.roomType,
+		bookingData,
+		perRoomPrice,
 	]);
 	function isValidEmail(email) {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -124,6 +124,7 @@ const EditBooking = () => {
 	}
 
 	const handleSubmit = async () => {
+		setShowModal(false);
 		try {
 			if (!isValidEmail(bookingData.email)) {
 				setErrorMessage({ message: "Invalid email address", success: "error" });
@@ -197,16 +198,14 @@ const EditBooking = () => {
 				}),
 			});
 			const data = await res.json();
-			// console.log(data);
+
 			if (res.ok) {
-				navigate("/create");
+				navigate("/");
 
 				setErrorMessage({
 					message: "You have successfully updated the booking",
 					success: "success",
 				});
-
-				console.log("YYYYYYYYIOOOOO");
 			}
 			if (!res.ok) {
 				console.log(data);
@@ -217,18 +216,6 @@ const EditBooking = () => {
 		}
 	};
 
-	// const handleChangeRooms = (e) => {
-	// 	setBookingData({
-	// 		...bookingData,
-	// 		roomType: e.target.value,
-	// 	});
-	// };
-
-	// if (errorMessage !== "") {
-	// 	setTimeout(() => {
-	// 		setErrorMessage({ message: "", success: "error" });
-	// 	}, 9000);
-	// }
 	useEffect(() => {
 		setTimeout(() => {
 			setErrorMessage({ message: "", success: "error" });
@@ -240,7 +227,7 @@ const EditBooking = () => {
 			{errorMessage.message && (
 				<Alert severity={errorMessage.success}>{errorMessage.message}</Alert>
 			)}
-			<div className="flex flex-col gap-2">
+			<div className={`flex flex-col gap-2 ${showModal ? "opacity-50" : ""}`}>
 				<div className="">Email address :</div>
 				<TextField
 					id="outlined-basic"
@@ -270,11 +257,9 @@ const EditBooking = () => {
 							setBookingData({
 								...bookingData,
 								roomType: e.target.value,
+								roomNumber: 0,
 							});
-							// console.log(bookingData.roomType);
 							setRoomArray(totalRooms[e.target.value]);
-
-							// console.log(e.target.value);
 						}}
 					>
 						<MenuItem key="Select" value="1">
@@ -346,17 +331,61 @@ const EditBooking = () => {
 					</LocalizationProvider>
 				</div>
 				<div className="flex justify-end text-2xl font-serif font-bold">
-					Updated Ammount in Rs :{bookingData.price}
+					Updated Ammount in Rs :
+					<span className="text-pink-700 text-3xl mx-1 font-mono font-extrabold underline">
+						{bookingData.price}
+					</span>
 				</div>
 				<div className="flex justify-end">
 					<Button
 						variant="contained"
-						onClick={handleSubmit}
+						onClick={() => setShowModal(true)}
+						// onClick={handleSubmit}
 						className="text-xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:bg-gradient-to-r hover:from-pink-500 hover:via-purple-500 hover:to-indigo-500 text-white py-2 px-4 w-[20rem] mt-5 rounded h-12"
 					>
 						Update booking
 					</Button>
 				</div>
+			</div>
+			<div className="w-[300px]">
+				<Modal
+					show={showModal}
+					// show={true}
+					onClose={() => setShowModal(false)}
+					popup
+					size="md"
+					className="max-w-xl mx-auto z-20"
+				>
+					<Modal.Header />
+					<Modal.Body>
+						<div className="text-center">
+							<HiOutlineExclamationCircle className="h-14 w-14 text-black mb-4 mx-auto" />
+							<h3 className="mb-5 text-lg text-black font-semibold">
+								Are you sure you want to update this booking?<br></br>
+								Your updated amount will be:
+								{/* <span className="font-bold text-xl italic underline text-pink-600 mx-1"></span> */}
+								<span className=" mx-2 text-2xl italic underline text-pink-700 font-bold font-it">
+									<span className="text-xl">Rs</span>
+									{bookingData.price}
+								</span>
+							</h3>
+							<div className="flex justify-center items-center gap-4">
+								<div
+									onClick={handleSubmit}
+									className="text-white hover:cursor-pointer bg-red-700 rounded text-center flex items-center justify-center hover:bg-red-500 border-2 w-48 h-12"
+								>
+									Yes, I'm sure
+								</div>
+
+								<Button color="black" onClick={() => setShowModal(false)}>
+									<div className="text-white bg-green-700 rounded text-center flex items-center justify-center hover:bg-green-500 border-2 w-24 h-12">
+										No, cancel
+									</div>
+								</Button>
+							</div>
+						</div>
+					</Modal.Body>
+				</Modal>
 			</div>
 		</div>
 	);

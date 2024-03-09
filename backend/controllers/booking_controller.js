@@ -1,7 +1,6 @@
 const Booking = require("../schemas/booking_schema");
-// const errorHandler = require("../utils/errorHandler");
 const AppError = require("./../utils/errorHandler");
-
+const nodemailer = require("nodemailer");
 const moment = require("moment");
 const getAllBookings = async (req, res) => {
 	try {
@@ -15,7 +14,6 @@ const getAllBookings = async (req, res) => {
 const createBooking = async (req, res, next) => {
 	try {
 		const room = req.body;
-		console.log(room);
 		if (!room.userEmail) {
 			res.status(400).json({
 				success: false,
@@ -29,28 +27,42 @@ const createBooking = async (req, res, next) => {
 			roomNumber: room.roomNumber,
 			roomType: room.roomType,
 		});
-		console.log(ifAvailableRoom);
+
 		if (ifAvailableRoom > 0) {
-			// return next(AppError("Room is not available at the specified time", 404));
 			res.status(400).json({
 				success: false,
 				message: "Room is not available at the specified time",
 			});
 			return;
 		}
-		const totalTime = room.endTime - room.startTime;
-		console.log(totalTime);
+
 		const newBooking = new Booking({ ...room, status: "success" });
-		// newBooking.status = "success";
+
 		await newBooking.save();
-		console.log(typeof newBooking.endTime, newBooking.endTime, "*******");
+		await nodemailerMailingService(
+			"learnandgrowonefiveoneone@gmail.com",
+			room.userEmail,
+			"vhfp ffmp fylt qdci",
+			room,
+			"Booking is Confirmed",
+			"Thanks for using our app.\nYou have booked a room " +
+				room.roomType +
+				room.roomNumber +
+				" from " +
+				room.startTime +
+				" to " +
+				room.endTime +
+				".\n" +
+				"price Rs:" +
+				room.price
+		);
+
 		return res.status(201).json({
 			success: true,
 			message: "Booking created successfully",
 			data: newBooking,
 		});
 	} catch (err) {
-		// next(err);
 		console.log(err);
 	}
 };
@@ -62,9 +74,8 @@ const editBooking = async (req, res, next) => {
 			message: "Booking not found",
 		});
 	}
-	console.log("int the edit");
+
 	const room = req.body;
-	console.log(room);
 	if (!room.userEmail) {
 		res.status(400).json({
 			success: false,
@@ -79,21 +90,37 @@ const editBooking = async (req, res, next) => {
 		roomType: room.roomType,
 		_id: { $ne: req.params._id },
 	});
-	console.log(ifAvailableRoom);
+
 	if (ifAvailableRoom > 0) {
-		// return next(AppError("Room is not available at the specified time", 404));
 		res.status(400).json({
 			success: false,
 			message: "Room is not available at the specified time",
 		});
 		return;
 	}
-	console.log("********************************");
+
 	const editedBooking = await Booking.findByIdAndUpdate(req.params._id, {
 		...room,
 		status: "success",
 	});
-	console.log(typeof editedBooking.endTime);
+	await nodemailerMailingService(
+		"learnandgrowonefiveoneone@gmail.com",
+		room.userEmail,
+		"vhfp ffmp fylt qdci",
+		room,
+		"Booking is Updated successfully",
+		"Thanks for using our app.\nYou have booked a room " +
+			room.roomType +
+			room.roomNumber +
+			" from " +
+			room.startTime +
+			" to " +
+			room.endTime +
+			".\n" +
+			"price Rs:" +
+			room.price
+	);
+
 	res.status(200).json(editedBooking);
 };
 
@@ -105,17 +132,12 @@ const deleteBooking = async (req, res, next) => {
 };
 
 const getBooking = async (req, res, next) => {
-	// console.log(typeof req.params._id);
-
 	const bookingReq = await Booking.find({ _id: req.params._id });
-	// console.log(bookingReq[0].userEmail);
 	res.status(200).json(bookingReq[0]);
 };
 
 const viewallBookings = async (req, res, next) => {
 	try {
-		// const sortDirection = req.query.order === "asc" ? 1 : -1;
-
 		const roomNumber =
 			req.query.roomNumber && req.query.roomNumber[0] === "S"
 				? ""
@@ -124,28 +146,18 @@ const viewallBookings = async (req, res, next) => {
 			req.query.roomType && req.query.roomType[0] === "S"
 				? ""
 				: req.query.roomType;
-		console.log(req.query);
-		const room = req.query;
-		// if (req.query === ) {
-		// 	const posts = await Booking.find({});
 
-		// 	return res.status(200).json(posts);
-		// }
-		// function parseISOString(s) {
-		// 	var b = s.split(/\D+/);
-		// 	return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
-		// }
+		const room = req.query;
+
 		const reqstartTime = new Date(Date.parse(req.query.startTime));
 		const reqendTime = new Date(Date.parse(req.query.endTime));
 		if (room.startTime === "null" && room.endTime === "null") {
-			console.log("i am in ");
 			const posts = await Booking.find({
 				...(roomNumber && { roomNumber: roomNumber }),
 				...(roomType && { roomType: roomType }),
 			});
 			return res.status(200).json(posts);
 		} else if (room.startTime === "null" && room.endTime !== "null") {
-			// console.log("i am in ");
 			const posts = await Booking.find({
 				...(req.query.endTime && {
 					endTime: { $lte: reqendTime },
@@ -179,6 +191,40 @@ const viewallBookings = async (req, res, next) => {
 	} catch (error) {
 		next(error);
 	}
+};
+
+const nodemailerMailingService = async (
+	emailFrom,
+	emailTo,
+	passKey,
+	room,
+	subject,
+	text
+) => {
+	const transporter = nodemailer.createTransport({
+		service: "Gmail",
+		auth: {
+			user: emailFrom,
+			pass: passKey,
+		},
+	});
+
+	// Define email options
+	const mailOptions = {
+		from: emailFrom,
+		to: emailTo,
+		subject: subject,
+		text: text,
+	};
+
+	// Send email
+	transporter.sendMail(mailOptions, function (error, info) {
+		if (error) {
+			console.error(error);
+		} else {
+			console.log("Email sent: " + info.response);
+		}
+	});
 };
 
 module.exports = {

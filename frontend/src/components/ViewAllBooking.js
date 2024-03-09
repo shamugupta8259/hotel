@@ -3,36 +3,18 @@
 import React, { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import { Button, Modal, Table, TableRow } from "flowbite-react";
-import Alert from "@mui/material/Alert";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
-
-import {
-	HiArrowSmRight,
-	HiChartPie,
-	HiInbox,
-	HiShoppingBag,
-	HiTable,
-	HiUser,
-	HiViewBoards,
-} from "react-icons/hi";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { MenuItem } from "@mui/material";
 import dayjs from "dayjs";
-import moment from "moment/moment";
 
 const ViewAllBooking = () => {
 	const totalRooms = { A: [1, 2], B: [1, 2, 3], C: [1, 2, 3, 4, 5] };
-	const [roomArray, setRoomArray] = useState();
-	const perRoomPrice = {
-		A: 100,
-		B: 80,
-		C: 50,
-	};
+
 	let postToBeDeleted = {};
 	const [bookingData, setBookingData] = useState({
 		email: "",
@@ -41,24 +23,16 @@ const ViewAllBooking = () => {
 		roomType: "",
 		roomNumber: "",
 	});
+	const [roomArray, setRoomArray] = useState();
 	const [showMore, setShowMore] = useState(false);
 	const [booking, setBooking] = useState(true);
 	const [showModal, setShowModal] = useState(false);
-	const options = {
-		year: "numeric",
-		month: "2-digit",
-		day: "2-digit",
-		hour: "2-digit",
-		minute: "2-digit",
-		second: "2-digit",
-		hour12: false, // Use 24-hour format
-	};
 	const [bookIdToDelete, setBookIdToDelete] = useState({
 		updatedAt: "",
 		_id: "",
 	});
 	const [refundPrice, setRefundPrice] = useState(0);
-	// let refundPrice = 0;
+
 	const fetchPosts = async () => {
 		setBookingData({
 			email: "",
@@ -68,7 +42,6 @@ const ViewAllBooking = () => {
 			roomNumber: "",
 		});
 		try {
-			console.log("i am in fetching posts");
 			const res = await fetch(
 				`http://localhost:5005/api/booking/viewallbook?startTime=${bookingData.startTime}&endTime=${bookingData.endTime}&roomNumber=${bookingData.roomNumber}&roomType=${bookingData.roomType}`,
 				{
@@ -76,30 +49,32 @@ const ViewAllBooking = () => {
 				}
 			);
 			const data = await res.json();
-			console.log(data);
+
 			if (res.ok) {
 				setBooking(data);
+			} else {
+				console.log(data.error);
 			}
-			// console.log(data);
 		} catch (error) {
 			console.log(error);
 		}
 	};
-
+	// console.log(new Date(), Date.now());
 	const handleDeleteModal = () => {
-		console.log("i am in modal");
 		setRefundPrice(0);
-		// console.log(bookIdToDelete);
-		// console.log(bookIdToDelete.updatedAt);
-		// const timeDifferenceInMilliseconds =
-		// 	new Date() - new Date(bookIdToDelete.updatedAt);
-		console.log(postToBeDeleted);
-		console.log(postToBeDeleted.updatedAt);
+
+		const currentDate = new Date();
+		const endDate = new Date(postToBeDeleted.endTime);
+		// console.log();
+		const completedBooking = endDate.getTime() - currentDate.getTime();
+		if (completedBooking < 0) {
+			return setRefundPrice(0);
+		}
 		const timeDifferenceInMilliseconds =
 			new Date() - new Date(postToBeDeleted.updatedAt);
 		const timeDifferenceInHours =
 			timeDifferenceInMilliseconds / (1000 * 60 * 60);
-		console.log(timeDifferenceInHours, "**********************************");
+
 		if (timeDifferenceInHours.toFixed(2) > 48) {
 			setRefundPrice(postToBeDeleted.price);
 		} else if (
@@ -110,16 +85,12 @@ const ViewAllBooking = () => {
 		} else {
 			setRefundPrice(0);
 		}
-		console.log(refundPrice, postToBeDeleted.price);
-		// handleDeletePost();
 	};
 	useEffect(() => {
 		fetchPosts();
 		setShowMore(false);
-		// handleDeleteModal();
 	}, [showMore, refundPrice]);
 	const handleDeletePost = async () => {
-		// setRefundPrice(0);
 		setShowModal(false);
 		try {
 			const res = await fetch(
@@ -128,7 +99,6 @@ const ViewAllBooking = () => {
 					method: "DELETE",
 				}
 			);
-
 			const data = await res.json();
 			if (!res.ok) {
 				console.log(data.message);
@@ -137,34 +107,36 @@ const ViewAllBooking = () => {
 					prev.filter((post) => post._id !== bookIdToDelete._id)
 				);
 			}
-		} catch (error) {}
-		// const refundAmount
+		} catch (error) {
+			console.log(error);
+		}
 	};
 	const handleSubmit = async () => {
-		console.log(bookingData);
-		setBookingData({
-			...bookingData,
-			startTime: bookingData.startTime,
-			endTime: bookingData.endTime,
-			roomNumber:
-				bookingData.roomNumber === undefined ? "" : bookingData.roomNumber,
-			roomType: bookingData.roomType === undefined ? "" : bookingData.roomType,
-		});
-		console.log(bookingData);
+		try {
+			setBookingData({
+				...bookingData,
+				startTime: bookingData.startTime,
+				endTime: bookingData.endTime,
+				roomNumber:
+					bookingData.roomNumber === undefined ? "" : bookingData.roomNumber,
+				roomType:
+					bookingData.roomType === undefined ? "" : bookingData.roomType,
+			});
 
-		const res = await fetch(
-			`http://localhost:5005/api/booking/viewallbook?startTime=${bookingData.startTime}&endTime=${bookingData.endTime}&roomNumber=${bookingData.roomNumber}&roomType=${bookingData.roomType}`,
-			{
-				method: "GET",
+			const res = await fetch(
+				`http://localhost:5005/api/booking/viewallbook?startTime=${bookingData.startTime}&endTime=${bookingData.endTime}&roomNumber=${bookingData.roomNumber}&roomType=${bookingData.roomType}`,
+				{
+					method: "GET",
+				}
+			);
+			const data = await res.json();
+
+			if (res.ok) {
+				setBooking(data);
 			}
-		);
-		const data = await res.json();
-		console.log(data);
-		if (res.ok) {
-			setBooking(data);
+		} catch (error) {
+			console.log(error);
 		}
-
-		console.log(data);
 	};
 	const handleDeleteMessage = (post) => {
 		handleDeleteModal();
@@ -172,16 +144,19 @@ const ViewAllBooking = () => {
 			_id: post._id,
 			updatedAt: post.updatedAt,
 		});
-		console.log(post, post._id, bookIdToDelete);
+
 		setShowModal(true);
 	};
 	const handleClear = () => {
 		setShowMore(true);
 		fetchPosts();
 	};
-	console.log(booking);
+	// const handleEdit = () => {
+	//     if()
+	//     // to={`/update-post/${post._id}`}
+	// }
 	return (
-		<div className="flex flex-row">
+		<div className={`flex flex-row ${showModal ? "opacity-50" : ""}`}>
 			<div className="w-[79%]   table-auto overflow-x-scroll p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300">
 				{booking && booking.length > 0 ? (
 					<>
@@ -198,7 +173,7 @@ const ViewAllBooking = () => {
 							</Table.Head>
 							{booking.map((post) => (
 								<Table.Body className="divide-y" key={post._id}>
-									<Table.Row className="bg-white border-gray-700">
+									<Table.Row className="bg-white border-gray-700 text-gray-700">
 										<Table.Cell>
 											{new Date(post.updatedAt).toLocaleDateString()}
 										</Table.Cell>
@@ -206,7 +181,30 @@ const ViewAllBooking = () => {
 										<Table.Cell>{post.roomNumber}</Table.Cell>
 										<Table.Cell>{post.startTime}</Table.Cell>
 										<Table.Cell>{post.endTime}</Table.Cell>
-										<Table.Cell>{post.price}</Table.Cell>
+										<Table.Cell>
+											<span
+												className={`${
+													new Date(post.endTime) < new Date()
+														? "text-sky-800"
+														: "text-green-600"
+												} `}
+											>
+												<div className="font-semibold font-mono italic">
+													{post.price}
+												</div>
+												{new Date(post.endTime) < new Date() ? (
+													<>
+														<div className="text-xs text-red-500">
+															Booking Completed
+														</div>
+													</>
+												) : (
+													<>
+														<div className="text-xs text-blue-500">Booking</div>
+													</>
+												)}
+											</span>
+										</Table.Cell>
 										<Table.Cell>
 											<span
 												onClick={() => {
@@ -219,12 +217,25 @@ const ViewAllBooking = () => {
 											</span>
 										</Table.Cell>
 										<Table.Cell>
-											<Link
-												className="text-teal-500 hover:underline"
-												to={`/update-post/${post._id}`}
+											<div
+												className="text-teal-500"
+												// to={`/update-post/${post._id}`}
+												// onClick={handleEdit}
 											>
-												Edit
-											</Link>
+												{new Date(post.startTime) < new Date() ||
+												new Date(post.endTime) < new Date() ? (
+													<div className=" text-gray-600 flex-wrap w-14 h-12">
+														progress or completed
+													</div>
+												) : (
+													<Link
+														className="text-teal-500 hover:underline"
+														to={`/update-post/${post._id}`}
+													>
+														Edit
+													</Link>
+												)}
+											</div>
 										</Table.Cell>
 									</Table.Row>
 								</Table.Body>
@@ -248,18 +259,20 @@ const ViewAllBooking = () => {
 							<div className="text-center">
 								<HiOutlineExclamationCircle className="h-14 w-14 text-black mb-4 mx-auto" />
 								<h3 className="mb-5 text-lg text-black">
-									Are you sure you want to delete this post? Your Refund amount
-									will be {refundPrice}
+									Are you sure you want to delete this booking?<br></br>
+									Your Refund amount will be
+									<span className="text-2xl text-pink-700 font-bold">
+										{refundPrice}
+									</span>
 								</h3>
 								<div className="flex justify-center items-center gap-4">
-									{/* <Button color="failure"> */}
 									<div
 										onClick={handleDeletePost}
 										className="text-white hover:cursor-pointer bg-red-700 rounded text-center flex items-center justify-center hover:bg-red-500 border-2 w-48 h-12"
 									>
 										Yes, I'm sure
 									</div>
-									{/* </Button> */}
+
 									<Button color="black" onClick={() => setShowModal(false)}>
 										<div className="text-white bg-green-700 rounded text-center flex items-center justify-center hover:bg-green-500 border-2 w-24 h-12">
 											No, cancel
@@ -323,10 +336,8 @@ const ViewAllBooking = () => {
 									...bookingData,
 									roomType: e.target.value,
 								});
-								// console.log(bookingData.roomType);
-								setRoomArray(totalRooms[e.target.value]);
 
-								// console.log(e.target.value);
+								setRoomArray(totalRooms[e.target.value]);
 							}}
 						>
 							<MenuItem key="Select" value="1">

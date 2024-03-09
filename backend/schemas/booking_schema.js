@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 
-// const RoomSchema = {};
-
 const BookingSchema = new mongoose.Schema(
 	{
 		userEmail: {
