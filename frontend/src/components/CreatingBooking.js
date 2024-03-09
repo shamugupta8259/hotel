@@ -172,11 +172,11 @@ const CreatingBooking = () => {
 	}, [errorMessage]);
 
 	return (
-		<div className="max-w-[37rem] mx-auto mt-12">
+		<div className="max-w-[39rem] mx-auto mt-12">
 			{errorMessage.message && (
 				<Alert severity={errorMessage.success}>{errorMessage.message}</Alert>
 			)}
-			<div className="flex flex-col gap-2">
+			<div className="flex flex-col gap-2 left-4 right-5">
 				<div className="">Email address :</div>
 				<TextField
 					id="outlined-basic"

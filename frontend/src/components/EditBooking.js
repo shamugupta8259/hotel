@@ -231,11 +231,15 @@ const EditBooking = () => {
 	}, [errorMessage]);
 
 	return (
-		<div className="max-w-[37rem] mx-auto mt-12">
+		<div className="max-w-[37rem] mx-auto mt-12 ">
 			{errorMessage.message && (
 				<Alert severity={errorMessage.success}>{errorMessage.message}</Alert>
 			)}
-			<div className={`flex flex-col gap-2 ${showModal ? "opacity-50" : ""}`}>
+			<div
+				className={`flex flex-col  left-3 right-5 gap-2 ${
+					showModal ? "opacity-50" : ""
+				}`}
+			>
 				<div className="">Email address :</div>
 				<TextField
 					id="outlined-basic"
