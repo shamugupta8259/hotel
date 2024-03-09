@@ -166,9 +166,10 @@ const CreatingBooking = () => {
 	// };
 
 	useEffect(() => {
-		setTimeout(() => {
+		const id = setTimeout(() => {
 			setErrorMessage({ message: "", success: "error" });
 		}, 5000);
+		return () => clearTimeout(id);
 	}, [errorMessage]);
 
 	return (

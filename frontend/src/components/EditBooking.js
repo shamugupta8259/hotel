@@ -35,7 +35,6 @@ const EditBooking = () => {
 	});
 	const [room, setRoom] = useState({});
 	useEffect(() => {
-		// console.log("i am here");
 		try {
 			const fetchbooking = async () => {
 				const res = await fetch(
@@ -69,9 +68,10 @@ const EditBooking = () => {
 				}
 			};
 			fetchbooking();
-			// console.log(bookingData);
 		} catch (error) {}
 	}, []);
+
+	console.log(bookingData, "******");
 
 	useEffect(() => {
 		const perRoomPrice = {
@@ -115,14 +115,7 @@ const EditBooking = () => {
 				});
 			}
 		}
-	}, [
-		bookingData.email,
-		bookingData.endTime,
-		bookingData.startTime,
-		bookingData.roomNumber,
-		bookingData.roomType,
-		bookingData,
-	]);
+	}, []);
 	function isValidEmail(email) {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		return emailRegex.test(email);
@@ -225,9 +218,10 @@ const EditBooking = () => {
 	};
 
 	useEffect(() => {
-		setTimeout(() => {
+		const id = setTimeout(() => {
 			setErrorMessage({ message: "", success: "error" });
 		}, 5000);
+		return () => clearTimeout(id);
 	}, [errorMessage]);
 
 	return (
