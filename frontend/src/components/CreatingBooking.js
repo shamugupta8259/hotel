@@ -121,20 +121,23 @@ const CreatingBooking = () => {
 				});
 				return;
 			}
-			const res = await fetch("http://localhost:5005/api/booking/create", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					userEmail: email,
-					roomNumber: roomNumber,
-					roomType: roomType[0],
-					startTime: rooms.startTime,
-					endTime: rooms.endTime,
-					price: price,
-				}),
-			});
+			const res = await fetch(
+				"https://hotel-production.up.railway.app/api/booking/create",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						userEmail: email,
+						roomNumber: roomNumber,
+						roomType: roomType[0],
+						startTime: rooms.startTime,
+						endTime: rooms.endTime,
+						price: price,
+					}),
+				}
+			);
 			const data = await res.json();
 
 			if (res.ok) {

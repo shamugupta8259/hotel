@@ -42,7 +42,7 @@ const EditBooking = () => {
 		try {
 			const fetchbooking = async () => {
 				const res = await fetch(
-					`http://localhost:5005/api/booking/getbooking/${_id}`,
+					`https://hotel-production.up.railway.app/api/booking/getbooking/${_id}`,
 					{
 						method: "GET",
 						headers: {
@@ -183,20 +183,23 @@ const EditBooking = () => {
 				});
 				return;
 			}
-			const res = await fetch(`http://localhost:5005/api/booking/edit/${_id}`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					userEmail: bookingData.email,
-					roomNumber: bookingData.roomNumber,
-					roomType: bookingData.roomType[0],
-					startTime: bookingData.startTime,
-					endTime: bookingData.endTime,
-					price: bookingData.price,
-				}),
-			});
+			const res = await fetch(
+				`https://hotel-production.up.railway.app/api/booking/edit/${_id}`,
+				{
+					method: "PUT",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						userEmail: bookingData.email,
+						roomNumber: bookingData.roomNumber,
+						roomType: bookingData.roomType[0],
+						startTime: bookingData.startTime,
+						endTime: bookingData.endTime,
+						price: bookingData.price,
+					}),
+				}
+			);
 			const data = await res.json();
 
 			if (res.ok) {

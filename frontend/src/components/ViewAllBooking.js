@@ -43,7 +43,7 @@ const ViewAllBooking = () => {
 		});
 		try {
 			const res = await fetch(
-				`http://localhost:5005/api/booking/viewallbook?startTime=${bookingData.startTime}&endTime=${bookingData.endTime}&roomNumber=${bookingData.roomNumber}&roomType=${bookingData.roomType}`,
+				`https://hotel-production.up.railway.app/api/booking/viewallbook?startTime=${bookingData.startTime}&endTime=${bookingData.endTime}&roomNumber=${bookingData.roomNumber}&roomType=${bookingData.roomType}`,
 				{
 					method: "GET",
 				}
@@ -94,7 +94,7 @@ const ViewAllBooking = () => {
 		setShowModal(false);
 		try {
 			const res = await fetch(
-				`http://localhost:5005/api/booking/delete/${bookIdToDelete._id}`,
+				`https://hotel-production.up.railway.app/api/booking/delete/${bookIdToDelete._id}`,
 				{
 					method: "DELETE",
 				}
@@ -124,7 +124,7 @@ const ViewAllBooking = () => {
 			});
 
 			const res = await fetch(
-				`http://localhost:5005/api/booking/viewallbook?startTime=${bookingData.startTime}&endTime=${bookingData.endTime}&roomNumber=${bookingData.roomNumber}&roomType=${bookingData.roomType}`,
+				`https://hotel-production.up.railway.app/api/booking/viewallbook?startTime=${bookingData.startTime}&endTime=${bookingData.endTime}&roomNumber=${bookingData.roomNumber}&roomType=${bookingData.roomType}`,
 				{
 					method: "GET",
 				}
