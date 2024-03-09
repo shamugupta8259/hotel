@@ -50,7 +50,7 @@ const EditBooking = () => {
 				if (res.ok) {
 					const data = await res.json();
 					setRoom(data);
-					// console.log(data);
+
 					setBookingData({
 						...bookingData,
 						email: data.userEmail,
@@ -60,6 +60,7 @@ const EditBooking = () => {
 						roomNumber: data.roomNumber,
 						price: data.price,
 					});
+					console.log(data, bookingData);
 					// console.log(bookingData, "******");
 					setRoomArray(totalRooms[data.roomType]);
 				}
@@ -70,7 +71,7 @@ const EditBooking = () => {
 			fetchbooking();
 			// console.log(bookingData);
 		} catch (error) {}
-	}, [2]);
+	}, []);
 
 	useEffect(() => {
 		const perRoomPrice = {
