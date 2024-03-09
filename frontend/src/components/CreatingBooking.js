@@ -27,12 +27,12 @@ const CreatingBooking = () => {
 
 	const totalRooms = { A: [1, 2], B: [1, 2, 3], C: [1, 2, 3, 4, 5] };
 
-	const perRoomPrice = {
-		A: 100,
-		B: 80,
-		C: 50,
-	};
 	useEffect(() => {
+		const perRoomPrice = {
+			A: 100,
+			B: 80,
+			C: 50,
+		};
 		setPrice(0);
 		const checkInTime =
 			rooms.startTime === undefined ? new Date() : new Date(rooms.startTime);

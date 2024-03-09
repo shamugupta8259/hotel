@@ -28,11 +28,7 @@ const EditBooking = () => {
 	const [showModal, setShowModal] = useState(false);
 	const navigate = useNavigate();
 	const [roomArray, setRoomArray] = useState();
-	const perRoomPrice = {
-		A: 100,
-		B: 80,
-		C: 50,
-	};
+
 	const [errorMessage, setErrorMessage] = useState({
 		message: "",
 		success: "",
@@ -70,9 +66,15 @@ const EditBooking = () => {
 			};
 			fetchbooking();
 		} catch (error) {}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
+		const perRoomPrice = {
+			A: 100,
+			B: 80,
+			C: 50,
+		};
 		setBookingData({
 			...bookingData,
 			price: 0,
@@ -116,7 +118,6 @@ const EditBooking = () => {
 		bookingData.roomNumber,
 		bookingData.roomType,
 		bookingData,
-		perRoomPrice,
 	]);
 	function isValidEmail(email) {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

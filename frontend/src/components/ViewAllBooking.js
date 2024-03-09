@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import TextField from "@mui/material/TextField";
 import { Button, Modal, Table, TableRow } from "flowbite-react";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
@@ -33,7 +33,7 @@ const ViewAllBooking = () => {
 	});
 	const [refundPrice, setRefundPrice] = useState(0);
 
-	const fetchPosts = async () => {
+	const fetchPosts = useCallback(async () => {
 		setBookingData({
 			email: "",
 			startTime: null,
@@ -58,7 +58,7 @@ const ViewAllBooking = () => {
 		} catch (error) {
 			console.log(error);
 		}
-	};
+	});
 	// console.log(new Date(), Date.now());
 	const handleDeleteModal = () => {
 		setRefundPrice(0);
@@ -89,7 +89,8 @@ const ViewAllBooking = () => {
 	useEffect(() => {
 		fetchPosts();
 		setShowMore(false);
-	}, [showMore, refundPrice]);
+	}, [showMore, refundPrice, fetchPosts]);
+
 	const handleDeletePost = async () => {
 		setShowModal(false);
 		try {
