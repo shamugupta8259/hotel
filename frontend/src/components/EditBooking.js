@@ -28,17 +28,14 @@ const EditBooking = () => {
 	const [showModal, setShowModal] = useState(false);
 	const navigate = useNavigate();
 	const [roomArray, setRoomArray] = useState();
-	const perRoomPrice = {
-		A: 100,
-		B: 80,
-		C: 50,
-	};
+
 	const [errorMessage, setErrorMessage] = useState({
 		message: "",
 		success: "",
 	});
 	const [room, setRoom] = useState({});
 	useEffect(() => {
+		// console.log("i am here");
 		try {
 			const fetchbooking = async () => {
 				const res = await fetch(
@@ -53,6 +50,7 @@ const EditBooking = () => {
 				if (res.ok) {
 					const data = await res.json();
 					setRoom(data);
+					// console.log(data);
 					setBookingData({
 						...bookingData,
 						email: data.userEmail,
@@ -62,6 +60,7 @@ const EditBooking = () => {
 						roomNumber: data.roomNumber,
 						price: data.price,
 					});
+					// console.log(bookingData, "******");
 					setRoomArray(totalRooms[data.roomType]);
 				}
 				if (!res.ok) {
@@ -69,10 +68,17 @@ const EditBooking = () => {
 				}
 			};
 			fetchbooking();
+			// console.log(bookingData);
 		} catch (error) {}
-	}, []);
+	}, [2]);
+	console.log(bookingData);
 
 	useEffect(() => {
+		const perRoomPrice = {
+			A: 100,
+			B: 80,
+			C: 50,
+		};
 		setBookingData({
 			...bookingData,
 			price: 0,
@@ -116,7 +122,6 @@ const EditBooking = () => {
 		bookingData.roomNumber,
 		bookingData.roomType,
 		bookingData,
-		perRoomPrice,
 	]);
 	function isValidEmail(email) {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -211,7 +216,7 @@ const EditBooking = () => {
 				});
 			}
 			if (!res.ok) {
-				console.log(data);
+				// console.log(data);
 				setErrorMessage({ message: data.message, success: "error" });
 			}
 		} catch (error) {

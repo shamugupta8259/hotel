@@ -158,98 +158,101 @@ const ViewAllBooking = () => {
 	// }
 	return (
 		<div className={`flex flex-row ${showModal ? "opacity-50" : ""}`}>
-			<div className="w-[79%]   table-auto overflow-x-scroll p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300">
-				{booking && booking.length > 0 ? (
-					<>
-						<Table hoverable className="shadow-md">
-							<Table.Head className="text-lg  text-gray-700">
-								<Table.HeadCell>Created At</Table.HeadCell>
-								<Table.HeadCell>Room Type</Table.HeadCell>
-								<Table.HeadCell>Room Number</Table.HeadCell>
-								<Table.HeadCell>Check In Time</Table.HeadCell>
-								<Table.HeadCell>Check Out Time</Table.HeadCell>
-								<Table.HeadCell>Booking Price</Table.HeadCell>
-								<Table.HeadCell>Delete</Table.HeadCell>
-								<Table.HeadCell>Edit</Table.HeadCell>
-							</Table.Head>
-							{booking.map((post) => (
-								<Table.Body
-									className="divide-y border-2 rounded p-2"
-									key={post._id}
-								>
-									<Table.Row className="bg-white border-gray-200 text-gray-700">
-										<Table.Cell>
-											{new Date(post.updatedAt).toLocaleDateString()}
-										</Table.Cell>
-										<Table.Cell>{post.roomType}</Table.Cell>
-										<Table.Cell>{post.roomNumber}</Table.Cell>
-										<Table.Cell>{post.startTime}</Table.Cell>
-										<Table.Cell>{post.endTime}</Table.Cell>
-										<Table.Cell>
-											<span
-												className={`${
-													new Date(post.endTime) < new Date()
-														? "text-sky-800"
-														: "text-green-600"
-												} `}
-											>
-												<div className="font-semibold font-mono italic">
-													{post.price}
-												</div>
-												{new Date(post.endTime) < new Date() ? (
-													<>
-														<div className="text-xs text-red-500">
-															Booking Completed
-														</div>
-													</>
-												) : (
-													<>
-														<div className="text-xs text-blue-500">Booking</div>
-													</>
-												)}
-											</span>
-										</Table.Cell>
-										<Table.Cell>
-											<span
-												onClick={() => {
-													postToBeDeleted = post;
-													handleDeleteMessage(post);
-												}}
-												className="font-medium text-red-500 hover:underline cursor-pointer"
-											>
-												Delete
-											</span>
-										</Table.Cell>
-										<Table.Cell>
-											<div
-												className="text-teal-500"
-												// to={`/update-post/${post._id}`}
-												// onClick={handleEdit}
-											>
-												{new Date(post.startTime) < new Date() ||
-												new Date(post.endTime) < new Date() ? (
-													<div className=" text-gray-600 flex-wrap w-14 h-12">
-														progress or completed
+			<div className="w-[100%] ">
+				<div className="table-auto overflow-x-scroll p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300">
+					{booking && booking.length > 0 ? (
+						<>
+							<Table hoverable className="shadow-md">
+								<Table.Head className="text-lg  text-gray-700">
+									<Table.HeadCell>Created At</Table.HeadCell>
+									<Table.HeadCell>Room Type</Table.HeadCell>
+									<Table.HeadCell>Room Number</Table.HeadCell>
+									<Table.HeadCell>Check In Time</Table.HeadCell>
+									<Table.HeadCell>Check Out Time</Table.HeadCell>
+									<Table.HeadCell>Booking Price</Table.HeadCell>
+									<Table.HeadCell>Delete</Table.HeadCell>
+									<Table.HeadCell>Edit</Table.HeadCell>
+								</Table.Head>
+								{booking.map((post) => (
+									<Table.Body
+										className="divide-y border-2 rounded p-2"
+										key={post._id}
+									>
+										<Table.Row className="bg-white border-gray-200 text-gray-700">
+											<Table.Cell>
+												{new Date(post.updatedAt).toLocaleDateString()}
+											</Table.Cell>
+											<Table.Cell>{post.roomType}</Table.Cell>
+											<Table.Cell>{post.roomNumber}</Table.Cell>
+											<Table.Cell>{post.startTime}</Table.Cell>
+											<Table.Cell>{post.endTime}</Table.Cell>
+											<Table.Cell>
+												<span
+													className={`${
+														new Date(post.endTime) < new Date()
+															? "text-sky-800"
+															: "text-green-600"
+													} `}
+												>
+													<div className="font-semibold font-mono italic">
+														{post.price}
 													</div>
-												) : (
-													<Link
-														className="text-teal-500 hover:underline"
-														to={`/update-post/${post._id}`}
-													>
-														Edit
-													</Link>
-												)}
-											</div>
-										</Table.Cell>
-									</Table.Row>
-								</Table.Body>
-							))}
-						</Table>
-					</>
-				) : (
-					<p>You have no posts yet!</p>
-				)}
-
+													{new Date(post.endTime) < new Date() ? (
+														<>
+															<div className="text-xs text-red-500">
+																Booking Completed
+															</div>
+														</>
+													) : (
+														<>
+															<div className="text-xs text-blue-500">
+																Booking
+															</div>
+														</>
+													)}
+												</span>
+											</Table.Cell>
+											<Table.Cell>
+												<span
+													onClick={() => {
+														postToBeDeleted = post;
+														handleDeleteMessage(post);
+													}}
+													className="font-medium text-red-500 hover:underline cursor-pointer"
+												>
+													Delete
+												</span>
+											</Table.Cell>
+											<Table.Cell>
+												<div
+													className="text-teal-500"
+													// to={`/update-post/${post._id}`}
+													// onClick={handleEdit}
+												>
+													{new Date(post.startTime) < new Date() ||
+													new Date(post.endTime) < new Date() ? (
+														<div className=" text-gray-600 flex-wrap w-14 h-12">
+															progress or completed
+														</div>
+													) : (
+														<Link
+															className="text-teal-500 hover:underline"
+															to={`/update-post/${post._id}`}
+														>
+															Edit
+														</Link>
+													)}
+												</div>
+											</Table.Cell>
+										</Table.Row>
+									</Table.Body>
+								))}
+							</Table>
+						</>
+					) : (
+						<p>You have no posts yet!</p>
+					)}
+				</div>
 				<div className="w-[300px]">
 					<Modal
 						show={showModal}
@@ -288,7 +291,7 @@ const ViewAllBooking = () => {
 					</Modal>
 				</div>
 			</div>
-			<div className="flex justify-end  ">
+			<div className="fixed right-0 z-100 bg-white">
 				<div className=" ">
 					<div>
 						<LocalizationProvider dateAdapter={AdapterDayjs}>
