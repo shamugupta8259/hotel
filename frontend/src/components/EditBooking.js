@@ -334,7 +334,7 @@ const EditBooking = () => {
 					</LocalizationProvider>
 				</div>
 				<div className="flex justify-end text-2xl font-serif font-bold">
-					Updated Ammount in Rs :
+					Ammount in Rs :
 					<span className="text-pink-700 text-3xl mx-1 font-mono font-extrabold underline">
 						{bookingData.price}
 					</span>

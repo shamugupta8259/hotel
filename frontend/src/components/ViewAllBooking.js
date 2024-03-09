@@ -94,7 +94,7 @@ const ViewAllBooking = () => {
 	useEffect(() => {
 		fetchPosts();
 		setShowMore(false);
-	}, [showMore, refundPrice, fetchPosts]);
+	}, [showMore, refundPrice]);
 
 	const handleDeletePost = async () => {
 		setShowModal(false);
