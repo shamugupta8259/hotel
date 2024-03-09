@@ -43,7 +43,7 @@ const createBooking = async (req, res, next) => {
 		const newBooking = new Booking({ ...room, status: "success" });
 		// newBooking.status = "success";
 		await newBooking.save();
-
+		console.log(typeof newBooking.endTime, newBooking.endTime, "*******");
 		return res.status(201).json({
 			success: true,
 			message: "Booking created successfully",
@@ -77,6 +77,7 @@ const editBooking = async (req, res, next) => {
 		endTime: { $gte: room.startTime },
 		roomNumber: room.roomNumber,
 		roomType: room.roomType,
+		_id: { $ne: req.params._id },
 	});
 	console.log(ifAvailableRoom);
 	if (ifAvailableRoom > 0) {
@@ -92,7 +93,7 @@ const editBooking = async (req, res, next) => {
 		...room,
 		status: "success",
 	});
-	console.log(editedBooking);
+	console.log(typeof editedBooking.endTime);
 	res.status(200).json(editedBooking);
 };
 
@@ -130,77 +131,51 @@ const viewallBookings = async (req, res, next) => {
 
 		// 	return res.status(200).json(posts);
 		// }
-		const reqstartTime = new Date(req.query.startTime);
-		const reqendTime = new Date(req.query.startTime);
-		if (!roomType.startTime && !roomType.endTime) {
-			console.log("yooooo");
+		// function parseISOString(s) {
+		// 	var b = s.split(/\D+/);
+		// 	return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
+		// }
+		const reqstartTime = new Date(Date.parse(req.query.startTime));
+		const reqendTime = new Date(Date.parse(req.query.endTime));
+		if (room.startTime === "null" && room.endTime === "null") {
+			console.log("i am in ");
 			const posts = await Booking.find({
 				...(roomNumber && { roomNumber: roomNumber }),
 				...(roomType && { roomType: roomType }),
 			});
-
 			return res.status(200).json(posts);
-		} else if (!roomType.endTime) {
+		} else if (room.startTime === "null" && room.endTime !== "null") {
+			// console.log("i am in ");
 			const posts = await Booking.find({
-				...(req.query.startTime !== null && {
-					startTime: { $gte: reqstartTime },
-				}),
-				...(roomNumber && { roomNumber: roomNumber }),
-				...(roomType && { roomType: roomType }),
-			});
-
-			return res.status(200).json(posts);
-		} else if (!roomType.startTime) {
-			const posts = await Booking.find({
-				...(req.query.endTime !== null && {
+				...(req.query.endTime && {
 					endTime: { $lte: reqendTime },
 				}),
 				...(roomNumber && { roomNumber: roomNumber }),
 				...(roomType && { roomType: roomType }),
 			});
-
+			return res.status(200).json(posts);
+		} else if (room.startTime !== "null" && room.endTime === "null") {
+			const posts = await Booking.find({
+				...(req.query.startTime && {
+					startTime: { $gte: reqstartTime },
+				}),
+				...(roomNumber && { roomNumber: roomNumber }),
+				...(roomType && { roomType: roomType }),
+			});
 			return res.status(200).json(posts);
 		} else {
 			const posts = await Booking.find({
-				...(req.query.startTime !== null && {
+				...(req.query.startTime && {
 					startTime: { $gte: reqstartTime },
 				}),
-				...(req.query.endTime !== null && {
+				...(req.query.endTime && {
 					endTime: { $lte: reqendTime },
 				}),
 				...(roomNumber && { roomNumber: roomNumber }),
 				...(roomType && { roomType: roomType }),
 			});
-
 			return res.status(200).json(posts);
 		}
-		// const post11 = await Booking.find();
-		// console.log(post11);
-		// if (req.query.endTime === null && req.query.startTime === null) {
-		// 	const posts = await Booking.find({
-		// 		...(roomNumber && { roomNumber: roomNumber }),
-		// 		...(roomType && { roomType: roomType }),
-		// 	});
-		// 	console.log(posts);
-		// 	return res.status(200).json(posts);
-		// } else {
-		// 	const posts = await Booking.find({
-		// 		...(req.query.startTime && {
-		// 			startTime: { $gte: moment(req.query.startTime).toDate() },
-		// 		}),
-		// 		...(req.query.endTime && {
-		// 			endTime: { $lte: moment(req.query.endTime).toDate() },
-		// 		}),
-		// 		...(roomNumber && { roomNumber: roomNumber }),
-		// 		...(roomType && { roomType: roomType }),
-		// 	});
-		// 	console.log(posts);
-		// 	return res.status(200).json(posts);
-		// }
-
-		// const totalPosts = await posts.countDocuments();
-		// const totalPosts = await Booking.find();
-		// console.log(totalPosts);
 	} catch (error) {
 		next(error);
 	}

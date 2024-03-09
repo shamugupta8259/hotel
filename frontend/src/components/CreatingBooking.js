@@ -15,6 +15,7 @@ const CreatingBooking = () => {
 		message: "",
 		success: "",
 	});
+	// let priceUpdated = 0;
 	const [email, setEmail] = useState("");
 	const [rooms, setRooms] = useState({
 		startTime: new Date(),

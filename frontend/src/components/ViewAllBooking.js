@@ -33,6 +33,7 @@ const ViewAllBooking = () => {
 		B: 80,
 		C: 50,
 	};
+	let postToBeDeleted = {};
 	const [bookingData, setBookingData] = useState({
 		email: "",
 		startTime: null,
@@ -43,8 +44,21 @@ const ViewAllBooking = () => {
 	const [showMore, setShowMore] = useState(false);
 	const [booking, setBooking] = useState(true);
 	const [showModal, setShowModal] = useState(false);
-	const [bookIdToDelete, setBookIdToDelete] = useState("");
+	const options = {
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+		hour: "2-digit",
+		minute: "2-digit",
+		second: "2-digit",
+		hour12: false, // Use 24-hour format
+	};
+	const [bookIdToDelete, setBookIdToDelete] = useState({
+		updatedAt: "",
+		_id: "",
+	});
 	const [refundPrice, setRefundPrice] = useState(0);
+	// let refundPrice = 0;
 	const fetchPosts = async () => {
 		setBookingData({
 			email: "",
@@ -71,30 +85,40 @@ const ViewAllBooking = () => {
 			console.log(error);
 		}
 	};
-	useEffect(() => {
-		fetchPosts();
-		setShowMore(false);
-	}, [showMore]);
+
 	const handleDeleteModal = () => {
+		console.log("i am in modal");
 		setRefundPrice(0);
+		// console.log(bookIdToDelete);
+		// console.log(bookIdToDelete.updatedAt);
+		// const timeDifferenceInMilliseconds =
+		// 	new Date() - new Date(bookIdToDelete.updatedAt);
+		console.log(postToBeDeleted);
+		console.log(postToBeDeleted.updatedAt);
 		const timeDifferenceInMilliseconds =
-			new Date() - new Date(bookIdToDelete.updatedAt);
+			new Date() - new Date(postToBeDeleted.updatedAt);
 		const timeDifferenceInHours =
 			timeDifferenceInMilliseconds / (1000 * 60 * 60);
-		if (timeDifferenceInHours.toFixed(0) > 48) {
-			setRefundPrice(bookIdToDelete.price);
+		console.log(timeDifferenceInHours, "**********************************");
+		if (timeDifferenceInHours.toFixed(2) > 48) {
+			setRefundPrice(postToBeDeleted.price);
 		} else if (
-			timeDifferenceInHours.toFixed(0) < 48 &&
-			timeDifferenceInHours.toFixed(0) > 24
+			timeDifferenceInHours.toFixed(2) < 48 &&
+			timeDifferenceInHours.toFixed(2) > 24
 		) {
-			setRefundPrice(bookIdToDelete.price / 2);
+			setRefundPrice((postToBeDeleted.price / 2).toFixed(2));
 		} else {
 			setRefundPrice(0);
 		}
+		console.log(refundPrice, postToBeDeleted.price);
+		// handleDeletePost();
 	};
-
+	useEffect(() => {
+		fetchPosts();
+		setShowMore(false);
+		// handleDeleteModal();
+	}, [showMore, refundPrice]);
 	const handleDeletePost = async () => {
-		handleDeleteModal();
 		// setRefundPrice(0);
 		setShowModal(false);
 		try {
@@ -142,6 +166,15 @@ const ViewAllBooking = () => {
 
 		console.log(data);
 	};
+	const handleDeleteMessage = (post) => {
+		handleDeleteModal();
+		setBookIdToDelete({
+			_id: post._id,
+			updatedAt: post.updatedAt,
+		});
+		console.log(post, post._id, bookIdToDelete);
+		setShowModal(true);
+	};
 	const handleClear = () => {
 		setShowMore(true);
 		fetchPosts();
@@ -159,6 +192,7 @@ const ViewAllBooking = () => {
 								<Table.HeadCell>Room Number</Table.HeadCell>
 								<Table.HeadCell>Check In Time</Table.HeadCell>
 								<Table.HeadCell>Check Out Time</Table.HeadCell>
+								<Table.HeadCell>Booking Price</Table.HeadCell>
 								<Table.HeadCell>Delete</Table.HeadCell>
 								<Table.HeadCell>Edit</Table.HeadCell>
 							</Table.Head>
@@ -172,11 +206,12 @@ const ViewAllBooking = () => {
 										<Table.Cell>{post.roomNumber}</Table.Cell>
 										<Table.Cell>{post.startTime}</Table.Cell>
 										<Table.Cell>{post.endTime}</Table.Cell>
+										<Table.Cell>{post.price}</Table.Cell>
 										<Table.Cell>
 											<span
 												onClick={() => {
-													setBookIdToDelete(post);
-													setShowModal(true);
+													postToBeDeleted = post;
+													handleDeleteMessage(post);
 												}}
 												className="font-medium text-red-500 hover:underline cursor-pointer"
 											>
@@ -214,7 +249,7 @@ const ViewAllBooking = () => {
 								<HiOutlineExclamationCircle className="h-14 w-14 text-black mb-4 mx-auto" />
 								<h3 className="mb-5 text-lg text-black">
 									Are you sure you want to delete this post? Your Refund amount
-									will be {bookIdToDelete.price}
+									will be {refundPrice}
 								</h3>
 								<div className="flex justify-center items-center gap-4">
 									{/* <Button color="failure"> */}
@@ -248,7 +283,7 @@ const ViewAllBooking = () => {
 									onChange={(e) => {
 										setBookingData({
 											...bookingData,
-											startTime: e !== null ? e.toISOString() : new Date(),
+											startTime: e !== null ? e.toDate() : new Date(),
 										});
 									}}
 									label="Check In Time"
@@ -266,7 +301,7 @@ const ViewAllBooking = () => {
 									onChange={(e) => {
 										setBookingData({
 											...bookingData,
-											endTime: e !== null ? e.toISOString() : new Date(),
+											endTime: e !== null ? e.toDate() : new Date(),
 										});
 									}}
 									label="Check Out Time"
