@@ -14,7 +14,9 @@ connectToDb(connectionUrl);
 app.use(express.json());
 app.use(cors());
 app.use("/api/booking", createBookingRouter);
-
+app.get("/", (req, res) => {
+	res.json("hello");
+});
 app.all("*", (req, res, next) => {
 	next(AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
