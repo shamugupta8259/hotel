@@ -115,7 +115,13 @@ const EditBooking = () => {
 				});
 			}
 		}
-	}, []);
+	}, [
+		bookingData.email,
+		bookingData.startTime,
+		bookingData.endTime,
+		bookingData.roomType,
+		bookingData.roomNumber,
+	]);
 	function isValidEmail(email) {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		return emailRegex.test(email);
