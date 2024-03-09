@@ -9,10 +9,12 @@ import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
 import { useNavigate, useParams } from "react-router-dom";
 import { MenuItem } from "@mui/material";
 import dayjs from "dayjs";
+import { useLocation } from "react-router-dom";
 import { Button, Modal } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 const EditBooking = () => {
+	const location = useLocation();
 	const totalRooms = { A: [1, 2], B: [1, 2, 3], C: [1, 2, 3, 4, 5] };
 	const { _id } = useParams();
 	const [bookingData, setBookingData] = useState({
@@ -26,12 +28,16 @@ const EditBooking = () => {
 	const [showModal, setShowModal] = useState(false);
 	const navigate = useNavigate();
 	const [roomArray, setRoomArray] = useState();
-
+	const perRoomPrice = {
+		A: 100,
+		B: 80,
+		C: 50,
+	};
 	const [errorMessage, setErrorMessage] = useState({
 		message: "",
 		success: "",
 	});
-	// const [room, setRoom] = useState({});
+	const [room, setRoom] = useState({});
 	useEffect(() => {
 		try {
 			const fetchbooking = async () => {
@@ -46,7 +52,7 @@ const EditBooking = () => {
 				);
 				if (res.ok) {
 					const data = await res.json();
-					// setRoom(data);
+					setRoom(data);
 					setBookingData({
 						...bookingData,
 						email: data.userEmail,
@@ -64,15 +70,9 @@ const EditBooking = () => {
 			};
 			fetchbooking();
 		} catch (error) {}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
-		const perRoomPrice = {
-			A: 100,
-			B: 80,
-			C: 50,
-		};
 		setBookingData({
 			...bookingData,
 			price: 0,
@@ -116,6 +116,7 @@ const EditBooking = () => {
 		bookingData.roomNumber,
 		bookingData.roomType,
 		bookingData,
+		perRoomPrice,
 	]);
 	function isValidEmail(email) {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
