@@ -59,7 +59,7 @@ const EditBooking = () => {
 						roomNumber: data.roomNumber,
 						price: data.price,
 					});
-					console.log(data, bookingData);
+					// console.log(data, bookingData);
 					// console.log(bookingData, "******");
 					setRoomArray(totalRooms[data.roomType]);
 				}
@@ -71,7 +71,7 @@ const EditBooking = () => {
 		} catch (error) {}
 	}, []);
 
-	console.log(bookingData, "******");
+	// console.log(bookingData, "******");
 
 	useEffect(() => {
 		const perRoomPrice = {
