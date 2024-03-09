@@ -161,7 +161,7 @@ const ViewAllBooking = () => {
 				{booking && booking.length > 0 ? (
 					<>
 						<Table hoverable className="shadow-md">
-							<Table.Head>
+							<Table.Head className="text-lg  text-gray-700">
 								<Table.HeadCell>Created At</Table.HeadCell>
 								<Table.HeadCell>Room Type</Table.HeadCell>
 								<Table.HeadCell>Room Number</Table.HeadCell>
@@ -172,8 +172,11 @@ const ViewAllBooking = () => {
 								<Table.HeadCell>Edit</Table.HeadCell>
 							</Table.Head>
 							{booking.map((post) => (
-								<Table.Body className="divide-y" key={post._id}>
-									<Table.Row className="bg-white border-gray-700 text-gray-700">
+								<Table.Body
+									className="divide-y border-2 rounded p-2"
+									key={post._id}
+								>
+									<Table.Row className="bg-white border-gray-200 text-gray-700">
 										<Table.Cell>
 											{new Date(post.updatedAt).toLocaleDateString()}
 										</Table.Cell>

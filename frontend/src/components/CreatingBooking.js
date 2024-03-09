@@ -97,7 +97,7 @@ const CreatingBooking = () => {
 					success: "error",
 				});
 				return;
-			} else if (checkInTime < new Date()) {
+			} else if (new Date(checkInTime) < new Date()) {
 				setErrorMessage({
 					message:
 						"check in date time should be greater than or equal to current time and date",
@@ -166,7 +166,7 @@ const CreatingBooking = () => {
 	useEffect(() => {
 		setTimeout(() => {
 			setErrorMessage({ message: "", success: "error" });
-		}, 9000);
+		}, 5000);
 	}, [errorMessage]);
 
 	return (
