@@ -71,7 +71,6 @@ const EditBooking = () => {
 			// console.log(bookingData);
 		} catch (error) {}
 	}, [2]);
-	console.log(bookingData);
 
 	useEffect(() => {
 		const perRoomPrice = {
